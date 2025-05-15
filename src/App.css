@@ -1,42 +1,145 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* Center the app container vertically and horizontally */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #ffe6f0; /* Light pink Tinder-style background */
+  width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', 'Arial', sans-serif; /* Modern, friendly font */
+}
+
+/* Phone-like app container - bigger size */
+.grindgrr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #fff;
+  width: 480px;  /* increased width for bigger phone */
+  height: 850px; /* increased height for bigger phone */
+  padding: 2.5rem 2rem;
+  border: 3px solid #ff2d55; /* Tinder red */
+  border-radius: 50px; /* more rounded for modern look */
+  box-shadow: 0 15px 50px rgba(255, 45, 85, 0.3), 0 3px 8px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* App branding header */
+.app-header {
+  width: 100%;
   text-align: center;
+  margin-bottom: 2.5rem;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-header h1 {
+  font-family: 'Pacifico', cursive, 'Poppins', sans-serif;
+  color: #ff2d55;
+  font-size: 3.2rem;
+  margin: 0 0 0.3rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  letter-spacing: 2.5px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.app-header p {
+  color: #d6336c;
+  font-size: 1.3rem;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+}
+
+/* Dog icon styling */
+.dog-icon {
+  font-size: 2.8rem;
+  vertical-align: middle;
+}
+
+/* Google sign-in button */
+.google-signin-btn {
+  background: linear-gradient(90deg, #ff2d55 60%, #ff6fa3 100%);
+  color: white;
+  border: none;
+  padding: 1.2rem 2.5rem;
+  font-size: 1.25rem;
+  border-radius: 35px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(255,45,85,0.15);
+  transition: background 0.3s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+}
+
+.google-signin-btn:hover {
+  background: linear-gradient(90deg, #d6336c 60%, #ff2d55 100%);
+  transform: scale(1.06);
+}
+
+/* Welcome container */
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.8rem;
+  margin-top: 3.5rem;
+}
+
+.welcome-container h2 {
+  color: #ff2d55;
+  font-size: 1.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.signout-btn {
+  background: #d6336c;
+  color: white;
+  border: none;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  border-radius: 35px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(255,45,85,0.12);
+  transition: background 0.3s, transform 0.15s;
+  font-weight: 700;
+}
+
+.signout-btn:hover {
+  background: #ff2d55;
+  transform: scale(1.06);
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 520px) {
+  .grindgrr-container {
+    width: 95vw;
+    height: 90vh;
+    border-radius: 30px;
+    padding: 1.5rem 1rem;
   }
-  to {
-    transform: rotate(360deg);
+  .app-header h1 {
+    font-size: 2.4rem;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .google-signin-btn, .signout-btn {
+    font-size: 1rem;
+    padding: 0.9rem 2rem;
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  .welcome-container h2 {
+    font-size: 1.3rem;
+  }
 }

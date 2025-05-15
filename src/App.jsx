@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { supabase } from "../supabaseClient";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 
 function App() {
   const [session, setSession] = useState(null);
@@ -21,10 +19,8 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  console.log(session?.user?.email);
-
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    await supabase.auth.signOut();
   };
 
   const signUp = async () => {
@@ -33,21 +29,24 @@ function App() {
     });
   };
 
-  if (!session) {
-    return (
-      <>
-        {/* <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />; */}
-        <button onClick={signUp}>Sign in with Google</button>
-      </>
-    );
-  } else {
-    return (
-      <div>
-        <h2>Welcome, {session?.user?.email}</h2>
-        <button onClick={signOut}>Sign out</button>
+  return (
+    <div className="grindgrr-container">
+      <div className="app-header">
+        <h1><span className="dog-icon">🐶</span>Grindgrr</h1>
+        <p>Love at first sniff – Dog play date app</p>
       </div>
-    );
-  }
+      {!session ? (
+        <button className="google-signin-btn" onClick={signUp}>
+          <span className="dog-icon">🐕</span> Sign in with Google
+        </button>
+      ) : (
+        <div className="welcome-container">
+          <h2><span className="dog-icon">🐩</span> Welcome, {session?.user?.email}</h2>
+          <button className="signout-btn" onClick={signOut}>Sign out</button>
+        </div>
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
