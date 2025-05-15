@@ -1,12 +1,17 @@
-# React + Vite
+# GrindGrr - Dog Playdate App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GrindGrr is a Tinder-style app for dog owners to find playdates for their furry friends. This application allows users to create profiles for themselves and their dogs, swipe through potential playdate matches, and chat with other dog owners once matched.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- User authentication (Google OAuth)
+- Profile creation for dog owners
+- Multiple dog profiles per user
+- Dog profile details including name, breed, age, size, energy level, and photos
+- Swipe interface to find potential matches
+- Chat messaging for users
 
-## Expanding the ESLint configuration
+## Technology Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Frontend**: React with styled-components
+- **Backend**: Supabase (Authentication, Database, Storage)
