@@ -28,7 +28,7 @@ function Home({ session, signUp, signOut, createProfile }) {
           </button>
         ) : (
           <div className="welcome-container">
-            <h2><span className="dog-icon">🐩</span> Welcome, {session?.user?.email}</h2>
+            <h2><span className="dog-icon">🐩</span> Welcome, {session?.user?.email?.split('@')[0]}</h2>
             <button className="createprofile-btn" onClick={handleCreateProfile}>Create Profile</button>
             <button className="signout-btn" onClick={signOut}>Sign out</button>
           </div>
@@ -68,7 +68,7 @@ function App() {
   const createProfile = async () => {
     const { data, error } = await supabase
       .from("profiles")
-      .insert([
+      .upsert([
         {
           id: session.user.id,
           email: session.user.email,
@@ -106,3 +106,5 @@ function App() {
 }
 
 export default App;
+
+
