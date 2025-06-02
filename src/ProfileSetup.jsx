@@ -94,6 +94,7 @@ export default function ProfileSetup({ user, onBack }) {
     setActiveDog(dogs.length);
   };
 
+  // cannot delete with just one dog profile
   const deleteDogProfile = async () => {
     if (dogs[activeDog]?.id) {
       await supabase
@@ -152,7 +153,7 @@ export default function ProfileSetup({ user, onBack }) {
   };
 
   return (
-    <div className="grindgrr-container" style={{ overflowY: "auto" }}>
+    <div className="grindgrr-container" style={{ overflowY: "auto", overflowX: "hidden"}}>
       {/* Header: Back | Profile Setup | Avatar */}
       <div style={{
         display: "flex",
@@ -161,7 +162,7 @@ export default function ProfileSetup({ user, onBack }) {
         width: "100%",
         marginBottom: "1.5rem"
       }}>
-        <button className="signout-btn" style={{ margin: 0, padding: "0.6rem 1.5rem" }} onClick={onBack}>
+        <button className="nav-btn" style={{ margin: 0, padding: "0.6rem 1.5rem" }} onClick={onBack}>
           ← Back
         </button>
         <div style={{
@@ -185,7 +186,7 @@ export default function ProfileSetup({ user, onBack }) {
             onChange={handleUserPhotoChange}
           />
           <img
-            src={userPhoto || "https://ui-avatars.com/api/?name=User"}
+            src={userPhoto}
             alt="User avatar"
             style={{
               width: 48,
@@ -221,7 +222,7 @@ export default function ProfileSetup({ user, onBack }) {
       </div>
 
       {/* User Name Edit */}
-      <label style={{ color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: 24 }}>Your Name</label>
+      <label style={{ color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: -280 }}>Your Name</label>
       <input
         className="profile-input"
         style={{ width: "95%", fontSize: "1.1rem", borderRadius: "12px", border: "1.5px solid #fd5564", padding: "0.7rem", marginBottom: "1rem", marginLeft: 24 }}
@@ -231,8 +232,9 @@ export default function ProfileSetup({ user, onBack }) {
       />
 
       {/* Dog Tabs */}
+      <label style={{ color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: -280 }}>Current Dog</label>
       <div style={{ display: "flex", alignItems: "center", width: "100%", marginBottom: "1rem" }}>
-        <div style={{ flex: 1, display: "flex", gap: "0.5rem", overflowX: "auto" }}>
+        <div style={{ flex: 1, display: "flex", gap: "0.5rem", overflowX: "auto", padding: "0.6rem" }}>
           {dogs.map((dog, idx) => (
             <button
               key={dog.id || idx}
@@ -274,9 +276,9 @@ export default function ProfileSetup({ user, onBack }) {
             src={dogs[activeDog]?.photo || "https://ui-avatars.com/api/?name=Dog"}
             alt="Dog avatar"
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: "50%",
+              width: 80,
+              height: 80,
+              borderRadius: "15%",
               objectFit: "cover",
               display: "block",
               marginRight: "1rem",
@@ -286,7 +288,7 @@ export default function ProfileSetup({ user, onBack }) {
           />
         </label>
         <button
-          className="signout-btn"
+          className="nav-btn"
           style={{ padding: "0.6rem 1.5rem" }}
           onClick={() => setShowDeleteDialog(true)}
           disabled={dogs.length === 1}
@@ -400,7 +402,7 @@ export default function ProfileSetup({ user, onBack }) {
             <h2 style={{ color: "#ff2d55" }}>Delete Dog Profile?</h2>
             <p>Are you sure you want to delete this dog profile? This cannot be undone.</p>
             <div style={{ marginTop: "1.2rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
-              <button className="signout-btn" onClick={() => setShowDeleteDialog(false)}>Cancel</button>
+              <button className="google-signin-btn" onClick={() => setShowDeleteDialog(false)}>Cancel</button>
               <button className="google-signin-btn" onClick={deleteDogProfile}>Delete</button>
             </div>
           </div>
