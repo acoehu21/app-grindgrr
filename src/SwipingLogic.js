@@ -46,8 +46,8 @@ async function checkMatch(swiperID, swipedID) {
 
 async function getOwner(dogId) {
     const { data, error } = await supabase
-        .from('dog_profiles') 
-        .select('owner_id')   
+        .from('dog_profiles')
+        .select('owner_id')
         .eq('id', dogId)
         .single();
 

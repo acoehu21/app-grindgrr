@@ -32,7 +32,7 @@ export default function ProfileSetup({ user, onBack }) {
       if (profileData?.avatar_url) {
         setUserPhoto(profileData.avatar_url);
       }
-      
+
 
       const { data: dogData } = await supabase
         .from("dog_profiles")
@@ -153,7 +153,7 @@ export default function ProfileSetup({ user, onBack }) {
   };
 
   return (
-    <div className="grindgrr-container" style={{ overflowY: "auto", overflowX: "hidden"}}>
+    <div className="grindgrr-container" style={{ overflowY: "auto", overflowX: "hidden" }}>
       {/* Header: Back | Profile Setup | Avatar */}
       <div style={{
         display: "flex",
@@ -308,7 +308,7 @@ export default function ProfileSetup({ user, onBack }) {
       />
 
       {/* Breed */}
-      <label style={{color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: -340 }}>Breed</label>
+      <label style={{ color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: -340 }}>Breed</label>
       <input
         className="profile-input"
         style={{ width: "95%", fontSize: "1.1rem", borderRadius: "12px", border: "1.5px solid #fd5564", padding: "0.7rem", marginBottom: "1rem", marginLeft: 24 }}
@@ -338,7 +338,7 @@ export default function ProfileSetup({ user, onBack }) {
             onChange={() => updateDog("size", "medium")}
           /> Medium
         </label>
-        <label style={{ marginLeft: 16, color: "#ff2d55"}}>
+        <label style={{ marginLeft: 16, color: "#ff2d55" }}>
           <input
             type="radio"
             name="dog-size"

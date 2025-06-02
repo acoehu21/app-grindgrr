@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import { supabase } from "../supabaseClient";
-import ProfileSetup from "./ProfileSetup"; 
+import ProfileSetup from "./ProfileSetup";
 import Swipe from "./Swipe";
+import ChatList from "./Chat/ChatList";
+import Chatroom from "./Chat/Chatroom";
 import { UserRoundPen, Dog, MessageCircle } from 'lucide-react';
 
 const dogImageUrl = "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=400&q=80";
@@ -18,6 +20,10 @@ function Home({ session, signUp, signOut, createProfile }) {
 
   const handleStartSwiping = () => {
     navigate("/swipe");
+  }
+
+  const handleChat = () => {
+    navigate("/chat");
   }
 
   return (
@@ -42,7 +48,7 @@ function Home({ session, signUp, signOut, createProfile }) {
               <button className="nav-btn" onClick={handleStartSwiping}>
                 <Dog size={48} />
               </button>
-              <button className="nav-btn" /*onClick={chat}*/>
+              <button className="nav-btn" onClick={handleChat}>
                 <MessageCircle size={48} />
               </button>
             </div>
@@ -100,34 +106,41 @@ function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={
-          <Home
+    <Routes>
+      <Route path="/" element={
+        <Home
+          session={session}
+          signUp={signUp}
+          signOut={signOut}
+          createProfile={createProfile}
+        />
+      } />
+      <Route path="/profile-setup" element={
+        session ?
+          <ProfileSetup
+            user={session?.user}
+            onBack={() => window.history.back()}
+          /> :
+          <Home signUp={signUp} />
+      } />
+      <Route path="/swipe" element={
+        session ?
+          <Swipe
             session={session}
-            signUp={signUp}
-            signOut={signOut}
-            createProfile={createProfile}
-          />
-        } />
-        <Route path="/profile-setup" element={
-          session ?
-            <ProfileSetup
-              user={session?.user}
-              onBack={() => window.history.back()}
-            /> :
-            <Home signUp={signUp} />
-        } />
-        <Route path="/swipe" element={
-          session ?
-            <Swipe
-              session={session}
-            /> :
-            <Home signUp={signUp} />
-        } />
-        {/* chat route */}
-      </Routes>
-    </Router>
+          /> :
+          <Home signUp={signUp} />
+      } />
+      <Route path="/chat" element={
+        session ?
+          <ChatList /> :
+          <Home signUp={signUp} />
+      } />
+      <Route path="/chatroom/:chatId" element={
+        session ?
+          <Chatroom /> :
+          <Home signUp={signUp} />
+      } />
+    </Routes>
   );
 }
 
