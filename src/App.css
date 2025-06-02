@@ -10,7 +10,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Poppins', 'Arial', sans-serif;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .grindgrr-container {
@@ -20,13 +20,14 @@ body {
   justify-content: flex-start;
   background: #ffff;
   width: 480px;
-  height: 850px;
+  height: 810px;
   padding: 2.5rem 2rem;
   border: 3px solid #ff2d55;
   border-radius: 50px;
   box-shadow: 0 15px 50px rgba(255, 45, 85, 0.3), 0 3px 8px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   position: relative;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .center-content {
@@ -36,6 +37,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .app-header {
@@ -45,7 +47,7 @@ body {
 }
 
 .app-header h1 {
-  font-family: 'Pacifico', cursive, 'Poppins', sans-serif;
+  font-family: 'Pacifico', cursive, 'Montserrat', Arial, sans-serif; /* Keep logo flair */
   color: #ff2d55;
   font-size: 3.2rem;
   margin: 0 0 0.3rem 0;
@@ -62,6 +64,7 @@ body {
   margin: 0;
   font-weight: 600;
   letter-spacing: 1.2px;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .dog-icon {
@@ -84,7 +87,7 @@ body {
   justify-content: center;
   gap: 0.8rem;
   font-weight: 700;
-  margin-top: 2.5rem;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .google-signin-btn:hover {
@@ -96,8 +99,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.8rem;
-  margin-top: 3.5rem;
+  gap: 1.0rem;
+  margin-top: 1.0rem;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 .welcome-container h2 {
@@ -105,12 +109,48 @@ body {
   font-size: 1.2rem;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.5rem;
   margin: 0;
   font-weight: 700;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
-.signout-btn {
+.circle{
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.nav-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.pass-btn {
+  marginRight: 0.5rem;
+  background: #fecaca;
+  color: #dc2626;
+}
+.pass-btn:hover {
+  transform: scale(1.1);
+  background: #f87171;
+  color: white;
+  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3);
+}
+
+.like-btn {
+  background: #bbf7d0;
+  color: #16a34a;
+}
+.like-btn:hover {
+  transform: scale(1.1);
+  background: #86efac;
+  color: white;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, 0.3);
+}
+
+.nav-btn {
   background: #d6336c;
   color: white;
   border: none;
@@ -121,11 +161,139 @@ body {
   box-shadow: 0 3px 8px rgba(255, 45, 85, 0.12);
   transition: background 0.3s, transform 0.15s;
   font-weight: 700;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
-.signout-btn:hover {
+.nav-btn:hover {
   background: #ff2d55;
   transform: scale(1.06);
+}
+
+.nav-btn:active {
+  border: none;
+}
+
+.swipe-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.swipe-btn-container {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  width: 100%;
+}
+
+.nav-bar {
+  display: flex;
+  justifyContent: space-around;
+  width: 100%;
+  padding: 10px;
+  border-top: 2px solid #eee;
+  background: #fff;
+  padding-top: 1rem;
+}
+
+.card {
+  position: relative;
+  width: 320px;
+  height: 450px;
+  max-width: 85vw;
+  max-height: 50vh;
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 1.5rem;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 5vh;
+}
+
+.card-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-bio {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+  color: white;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  text-align: left;
+}
+
+.dog-name {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.dog-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.dog-info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: capitalize;
+  margin: 0;
+}
+
+.no-matches-container {
+  background:rgb(220, 220, 220);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.no-matches-title {
+  color: #444142;
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+
+.no-matches-message {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 0 0 2rem 0;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 
 @media (max-width: 520px) {
@@ -141,7 +309,7 @@ body {
   }
 
   .google-signin-btn,
-  .signout-btn {
+  .nav-btn {
     font-size: 1rem;
     padding: 0.9rem 2rem;
   }
@@ -152,11 +320,16 @@ body {
 }
 
 .dog-photo {
-  width: 300px;
-  height: 300px;
+  width: 350px;       
+  height: 350px;      
   object-fit: cover;
   border-radius: 50%;
   box-shadow: 0 8px 20px rgba(255, 45, 85, 0.3);
+}
+
+
+.createprofile-btn {
+  font-weight: 700; 
 }
 
 .chat-header {

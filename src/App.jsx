@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-route
 import "./App.css";
 import { supabase } from "../supabaseClient";
 import ProfileSetup from "./ProfileSetup"; 
+import Swipe from "./Swipe";
+import { UserRoundPen, Dog, MessageCircle } from 'lucide-react';
 
 const dogImageUrl = "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=400&q=80";
 
@@ -14,6 +16,10 @@ function Home({ session, signUp, signOut, createProfile }) {
     navigate("/profile-setup");
   };
 
+  const handleStartSwiping = () => {
+    navigate("/swipe");
+  }
+
   return (
     <div className="grindgrr-container">
       <div className="app-header">
@@ -23,14 +29,24 @@ function Home({ session, signUp, signOut, createProfile }) {
       <div className="center-content">
         <img src={dogImageUrl} alt="Cute dog" className="dog-photo" />
         {!session ? (
-          <button className="google-signin-btn" onClick={signUp}>
+          <button className="google-signin-btn" onClick={signUp} style={{ marginTop: '3rem' }}>
             <span className="dog-icon">🐕</span> Sign in with Google
           </button>
         ) : (
           <div className="welcome-container">
-            <h2><span className="dog-icon">🐩</span> Welcome, {session?.user?.email}</h2>
-            <button className="createprofile-btn" onClick={handleCreateProfile}>Create Profile</button>
-            <button className="signout-btn" onClick={signOut}>Sign out</button>
+            <h2><span className="dog-icon">🐩</span> Welcome, {session?.user?.email?.split('@')[0]}</h2>
+            <div className="nav-container">
+              <button className="nav-btn" onClick={handleCreateProfile}>
+                <UserRoundPen size={48} />
+              </button>
+              <button className="nav-btn" onClick={handleStartSwiping}>
+                <Dog size={48} />
+              </button>
+              <button className="nav-btn" /*onClick={chat}*/>
+                <MessageCircle size={48} />
+              </button>
+            </div>
+            <button className="nav-btn" onClick={signOut}>Sign out</button>
           </div>
         )}
       </div>
@@ -68,7 +84,7 @@ function App() {
   const createProfile = async () => {
     const { data, error } = await supabase
       .from("profiles")
-      .insert([
+      .upsert([
         {
           id: session.user.id,
           email: session.user.email,
@@ -95,14 +111,26 @@ function App() {
           />
         } />
         <Route path="/profile-setup" element={
-          <ProfileSetup
-            user={session?.user}
-            onBack={() => window.history.back()}
-          />
+          session ?
+            <ProfileSetup
+              user={session?.user}
+              onBack={() => window.history.back()}
+            /> :
+            <Home signUp={signUp} />
         } />
+        <Route path="/swipe" element={
+          session ?
+            <Swipe
+              session={session}
+            /> :
+            <Home signUp={signUp} />
+        } />
+        {/* chat route */}
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
+

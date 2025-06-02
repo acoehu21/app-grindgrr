@@ -1,26 +1,4 @@
 import React, { useState, useEffect } from "react";
-import {
-  Avatar,
-  Button,
-  IconButton,
-  TextField,
-  Tabs,
-  Tab,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Slider,
-  Snackbar,
-  Box,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { supabase } from "../supabaseClient";
 
 const defaultDog = {
@@ -36,15 +14,12 @@ export default function ProfileSetup({ user, onBack }) {
   const [name, setName] = useState(user?.user_metadata?.full_name || "");
   const [email] = useState(user?.email || "");
   const [userPhoto, setUserPhoto] = useState(user?.user_metadata?.avatar_url || "");
-
   const [dogs, setDogs] = useState([{ ...defaultDog }]);
   const [activeDog, setActiveDog] = useState(0);
-
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  // Load existing profiles from Supabase on mount
   useEffect(() => {
     async function loadProfiles() {
       if (!user) return;
@@ -54,7 +29,10 @@ export default function ProfileSetup({ user, onBack }) {
         .eq("id", user.id)
         .single();
       if (profileData?.username) setName(profileData.username);
-      if (profileData?.avatar_url) setUserPhoto(profileData.avatar_url);
+      if (profileData?.avatar_url) {
+        setUserPhoto(profileData.avatar_url);
+      }
+      
 
       const { data: dogData } = await supabase
         .from("dog_profiles")
@@ -63,10 +41,8 @@ export default function ProfileSetup({ user, onBack }) {
       if (dogData && dogData.length > 0) setDogs(dogData);
     }
     loadProfiles();
-    // eslint-disable-next-line
   }, [user]);
 
-  // Update dog field helper
   const updateDog = (field, value) => {
     setDogs((prev) =>
       prev.map((dog, idx) =>
@@ -75,7 +51,6 @@ export default function ProfileSetup({ user, onBack }) {
     );
   };
 
-  // Upload photo helper 
   const uploadPhoto = async (file, folder) => {
     if (!file) return "";
     const fileExt = file.name.split(".").pop();
@@ -91,7 +66,6 @@ export default function ProfileSetup({ user, onBack }) {
     return data.publicUrl;
   };
 
-  // Handle user photo upload
   const handleUserPhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -108,7 +82,6 @@ export default function ProfileSetup({ user, onBack }) {
     }
   };
 
-  // Handle dog photo upload
   const handleDogPhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -116,13 +89,12 @@ export default function ProfileSetup({ user, onBack }) {
     if (url) updateDog("photo", url);
   };
 
-  // Add new dog profile
   const addDogProfile = () => {
     setDogs((prev) => [...prev, { ...defaultDog }]);
     setActiveDog(dogs.length);
   };
 
-  // Delete current dog profile
+  // cannot delete with just one dog profile
   const deleteDogProfile = async () => {
     if (dogs[activeDog]?.id) {
       await supabase
@@ -130,26 +102,25 @@ export default function ProfileSetup({ user, onBack }) {
         .delete()
         .eq("id", dogs[activeDog].id);
     }
-    setDogs((prev) => prev.filter((_, i) => i !== activeDog));
-    setActiveDog(0);
+    setDogs((prev) => {
+      const newDogs = prev.filter((_, i) => i !== activeDog);
+      setActiveDog(Math.max(0, activeDog - 1));
+      return newDogs;
+    });
     setShowDeleteDialog(false);
   };
 
-  // Save all changes (user profile + dog profiles)
   const handleSave = async () => {
     setSaving(true);
 
-    // Update user profile table
-    const { error: profileError } = await supabase
+    await supabase
       .from("profiles")
       .upsert({ id: user.id, username: name, email, avatar_url: userPhoto }, { onConflict: "id" });
 
-    // Update Supabase Auth user metadata
-    const { error: authError } = await supabase.auth.updateUser({
+    await supabase.auth.updateUser({
       data: { full_name: name, avatar_url: userPhoto },
     });
 
-    // Upsert dog profiles
     for (const dog of dogs) {
       if (!dog.name || !dog.breed || !dog.size) {
         alert("Please fill out all required dog fields.");
@@ -178,184 +149,285 @@ export default function ProfileSetup({ user, onBack }) {
 
     setSaving(false);
     setSuccess(true);
+    setTimeout(() => setSuccess(false), 2500);
   };
 
   return (
-    <Box sx={{ maxWidth: 480, mx: "auto", p: 2 }}>
-      {/* Header with Back Arrow */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        <IconButton onClick={onBack}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Box sx={{ flexGrow: 1, textAlign: "center", fontWeight: 600, fontSize: "1.2rem" }}>
-          Profile Setup / Editing
-        </Box>
-        {/* User profile photo upload (top right) */}
-        <input
-          accept="image/*"
-          style={{ display: "none" }}
-          id="user-photo-upload"
-          type="file"
-          onChange={handleUserPhotoChange}
-        />
-        <label htmlFor="user-photo-upload">
-          <IconButton component="span">
-            <Avatar
-              src={userPhoto}
-              sx={{ width: 48, height: 48 }}
-            />
-          </IconButton>
+    <div className="grindgrr-container" style={{ overflowY: "auto", overflowX: "hidden"}}>
+      {/* Header: Back | Profile Setup | Avatar */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        width: "100%",
+        marginBottom: "1.5rem"
+      }}>
+        <button className="nav-btn" style={{ margin: 0, padding: "0.6rem 1.5rem" }} onClick={onBack}>
+          ← Back
+        </button>
+        <div style={{
+          flex: 1,
+          textAlign: "center",
+          fontWeight: 700,
+          fontSize: "1.5rem",
+          color: "#ff2d55",
+          fontFamily: "'Montserrat', Arial, sans-serif",
+          letterSpacing: 1,
+          whiteSpace: "nowrap"
+        }}>
+          Profile Setup
+        </div>
+        <label htmlFor="user-photo-upload" style={{ cursor: "pointer" }}>
+          <input
+            accept="image/*"
+            id="user-photo-upload"
+            type="file"
+            style={{ display: "none" }}
+            onChange={handleUserPhotoChange}
+          />
+          <img
+            src={userPhoto}
+            alt="User avatar"
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: "50%",
+              border: "2px solid #ff2d55",
+              objectFit: "cover",
+              display: "block"
+            }}
+          />
         </label>
-      </Box>
+      </div>
 
       {/* User Info */}
-      <TextField
-        fullWidth
-        label="Your Name"
-        margin="normal"
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "1.5rem" }}>
+        <img
+          src={userPhoto || "https://ui-avatars.com/api/?name=User"}
+          alt="User avatar"
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: "50%",
+            border: "2px solid #ff2d55",
+            objectFit: "cover",
+            display: "block",
+            marginRight: "1rem"
+          }}
+        />
+        <div>
+          <div style={{ fontWeight: 700, color: "#ff2d55", fontSize: "1.1rem", marginBottom: 2 }}>{name}</div>
+          <div style={{ color: "#424242", fontSize: "1rem", wordBreak: "break-all" }}>{email}</div>
+        </div>
+      </div>
+
+      {/* User Name Edit */}
+      <label style={{ color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: -280 }}>Your Name</label>
+      <input
+        className="profile-input"
+        style={{ width: "95%", fontSize: "1.1rem", borderRadius: "12px", border: "1.5px solid #fd5564", padding: "0.7rem", marginBottom: "1rem", marginLeft: 24 }}
+        type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <TextField
-        fullWidth
-        label="Email"
-        margin="normal"
-        value={email}
-        disabled
-      />
 
-      {/* Dog Profile Tabs */}
-      <Tabs
-        value={activeDog}
-        onChange={(_, idx) => setActiveDog(idx)}
-        variant="scrollable"
-        scrollButtons="auto"
-        sx={{ mb: 2 }}
-      >
-        {dogs.map((dog, idx) => (
-          <Tab key={dog.id || idx} label={dog.name || `Dog ${idx + 1}`} />
-        ))}
-        <IconButton onClick={addDogProfile} color="primary" aria-label="Add Dog">
-          <AddCircleOutlineIcon />
-        </IconButton>
-      </Tabs>
+      {/* Dog Tabs */}
+      <label style={{ color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: -280 }}>Current Dog</label>
+      <div style={{ display: "flex", alignItems: "center", width: "100%", marginBottom: "1rem" }}>
+        <div style={{ flex: 1, display: "flex", gap: "0.5rem", overflowX: "auto", padding: "0.6rem" }}>
+          {dogs.map((dog, idx) => (
+            <button
+              key={dog.id || idx}
+              className="google-signin-btn"
+              style={{
+                background: idx === activeDog ? "linear-gradient(90deg, #ff2d55 60%, #ff6fa3 100%)" : "#fff",
+                color: idx === activeDog ? "#fff" : "#ff2d55",
+                border: idx === activeDog ? "none" : "2px solid #ff2d55",
+                fontSize: "1rem",
+                padding: "0.6rem 1.1rem",
+                minWidth: 90,
+              }}
+              onClick={() => setActiveDog(idx)}
+            >
+              {dog.name || `Dog ${idx + 1}`}
+            </button>
+          ))}
+        </div>
+        <button
+          className="google-signin-btn"
+          style={{ marginLeft: "0.5rem", padding: "0.6rem 1.1rem" }}
+          onClick={addDogProfile}
+        >
+          +
+        </button>
+      </div>
 
       {/* Dog Profile Editing */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-        {/* Dog photo upload */}
-        <input
-          accept="image/*"
-          style={{ display: "none" }}
-          id="dog-photo-upload"
-          type="file"
-          onChange={handleDogPhotoChange}
-        />
-        <label htmlFor="dog-photo-upload">
-          <IconButton component="span">
-            <Avatar
-              src={dogs[activeDog]?.photo}
-              sx={{ width: 64, height: 64, mr: 2 }}
-            >
-              <AddAPhotoIcon />
-            </Avatar>
-          </IconButton>
+      <div style={{ display: "flex", alignItems: "center", marginBottom: "1rem" }}>
+        <label htmlFor="dog-photo-upload" style={{ cursor: "pointer" }}>
+          <input
+            accept="image/*"
+            id="dog-photo-upload"
+            type="file"
+            style={{ display: "none" }}
+            onChange={handleDogPhotoChange}
+          />
+          <img
+            src={dogs[activeDog]?.photo || "https://ui-avatars.com/api/?name=Dog"}
+            alt="Dog avatar"
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: "15%",
+              objectFit: "cover",
+              display: "block",
+              marginRight: "1rem",
+              border: "2px solid #fd5564",
+              background: "#fff"
+            }}
+          />
         </label>
-        <Button
-          variant="outlined"
-          color="error"
-          startIcon={<DeleteIcon />}
+        <button
+          className="nav-btn"
+          style={{ padding: "0.6rem 1.5rem" }}
           onClick={() => setShowDeleteDialog(true)}
           disabled={dogs.length === 1}
         >
-          Delete Dog Profile
-        </Button>
-      </Box>
+          Delete Dog
+        </button>
+      </div>
 
-      <TextField
-        fullWidth
-        label="Dog Name"
-        margin="normal"
+      {/* Dog Name */}
+      <label style={{ color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: -300 }}>Dog Name</label>
+      <input
+        className="profile-input"
+        style={{ width: "95%", fontSize: "1.1rem", borderRadius: "12px", border: "1.5px solid #fd5564", padding: "0.7rem", marginBottom: "1rem", marginLeft: 24 }}
+        type="text"
         value={dogs[activeDog]?.name || ""}
         onChange={(e) => updateDog("name", e.target.value)}
       />
-      <TextField
-        fullWidth
-        label="Breed"
-        margin="normal"
+
+      {/* Breed */}
+      <label style={{color: "#ff2d55", fontWeight: 600, display: "block", textAlign: "left", marginLeft: -340 }}>Breed</label>
+      <input
+        className="profile-input"
+        style={{ width: "95%", fontSize: "1.1rem", borderRadius: "12px", border: "1.5px solid #fd5564", padding: "0.7rem", marginBottom: "1rem", marginLeft: 24 }}
+        type="text"
         value={dogs[activeDog]?.breed || ""}
         onChange={(e) => updateDog("breed", e.target.value)}
       />
 
-      {/* Dog Size Radio Buttons */}
-      <RadioGroup
-        row
-        value={dogs[activeDog]?.size || "medium"}
-        onChange={(e) => updateDog("size", e.target.value)}
-        sx={{ mb: 2 }}
-      >
-        <FormControlLabel value="small" control={<Radio />} label="Small" />
-        <FormControlLabel value="medium" control={<Radio />} label="Medium" />
-        <FormControlLabel value="large" control={<Radio />} label="Large" />
-      </RadioGroup>
+      {/* Size */}
+      <div style={{ margin: "1rem 0", width: "100%", textAlign: "left", marginLeft: 24 }}>
+        <span style={{ fontWeight: 600, color: "#ff2d55" }}>Size:</span>
+        <label style={{ marginLeft: 16, color: "#ff2d55" }}>
+          <input
+            type="radio"
+            name="dog-size"
+            value="small"
+            checked={dogs[activeDog]?.size === "small"}
+            onChange={() => updateDog("size", "small")}
+          /> Small
+        </label>
+        <label style={{ marginLeft: 16, color: "#ff2d55" }}>
+          <input
+            type="radio"
+            name="dog-size"
+            value="medium"
+            checked={dogs[activeDog]?.size === "medium"}
+            onChange={() => updateDog("size", "medium")}
+          /> Medium
+        </label>
+        <label style={{ marginLeft: 16, color: "#ff2d55"}}>
+          <input
+            type="radio"
+            name="dog-size"
+            value="large"
+            checked={dogs[activeDog]?.size === "large"}
+            onChange={() => updateDog("size", "large")}
+          /> Large
+        </label>
+      </div>
 
-      {/* Age Input */}
-      <TextField
-        fullWidth
-        label="Age (years)"
+      {/* Age */}
+      <label style={{ color: "#d6336c", fontWeight: 600, display: "block", textAlign: "left", marginLeft: 24 }}>Age (years)</label>
+      <input
+        className="profile-input"
+        style={{ width: "95%", fontSize: "1.1rem", borderRadius: "12px", border: "1.5px solid #fd5564", padding: "0.7rem", marginBottom: "1rem", marginLeft: 24 }}
         type="number"
-        nputProps={{ min: 0, max: 30 }}
-        margin="normal"
+        min={0}
+        max={30}
         value={dogs[activeDog]?.age || ""}
         onChange={(e) => updateDog("age", e.target.value.replace(/\D/, ""))}
-        />
+      />
 
-
-      {/* Energy Level Slider */}
-      <Box sx={{ my: 2 }}>
-        <Box sx={{ mb: 1 }}>Energy Level</Box>
-        <Slider
-          value={dogs[activeDog]?.energy || 5}
-          onChange={(_, val) => updateDog("energy", val)}
+      {/* Energy Level */}
+      <div style={{ margin: "1.2rem 0", width: "100%", marginLeft: 24 }}>
+        <label style={{ fontWeight: 600, color: "#ef4a75", display: "block", textAlign: "left" }}>Energy Level</label>
+        <input
+          type="range"
           min={1}
           max={10}
-          step={1}
-          marks={[
-            { value: 1, label: "Low" },
-            { value: 10, label: "High" },
-          ]}
+          value={dogs[activeDog]?.energy || 5}
+          onChange={(e) => updateDog("energy", Number(e.target.value))}
+          style={{ width: "95%" }}
         />
-      </Box>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.95rem", color: "#888", width: "95%" }}>
+          <span>Low</span>
+          <span>High</span>
+        </div>
+      </div>
 
-      {/* Save Changes Button */}
-      <Button
-        fullWidth
-        variant="contained"
-        color="primary"
+      {/* Save Button */}
+      <button
+        className="google-signin-btn createprofile-btn"
+        style={{ width: "100%", margin: "1.5rem 0" }}
         onClick={handleSave}
         disabled={saving}
       >
         {saving ? "Saving..." : "Save Changes"}
-      </Button>
+      </button>
 
-      {/* Deletion Confirmation Dialog */}
-      <Dialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)}>
-        <DialogTitle>Delete Dog Profile?</DialogTitle>
-        <DialogContent>
-          Are you sure you want to delete this dog profile? This cannot be undone.
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowDeleteDialog(false)}>Cancel</Button>
-          <Button color="error" onClick={deleteDogProfile}>Delete</Button>
-        </DialogActions>
-      </Dialog>
+      {/* Delete Dialog */}
+      {showDeleteDialog && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, width: "100vw", height: "100vh",
+          background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 1000
+        }}>
+          <div style={{
+            background: "#fff", padding: "2rem", borderRadius: "20px", minWidth: "320px", textAlign: "center", border: "2px solid #ff2d55"
+          }}>
+            <h2 style={{ color: "#ff2d55" }}>Delete Dog Profile?</h2>
+            <p>Are you sure you want to delete this dog profile? This cannot be undone.</p>
+            <div style={{ marginTop: "1.2rem", display: "flex", justifyContent: "center", gap: "1rem" }}>
+              <button className="google-signin-btn" onClick={() => setShowDeleteDialog(false)}>Cancel</button>
+              <button className="google-signin-btn" onClick={deleteDogProfile}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Success Snackbar */}
-      <Snackbar
-        open={success}
-        autoHideDuration={3000}
-        onClose={() => setSuccess(false)}
-        message="Profile updated successfully!"
-      />
-    </Box>
+      {success && (
+        <div style={{
+          position: "fixed",
+          bottom: "2rem",
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: "#ff2d55",
+          color: "#fff",
+          borderRadius: "30px",
+          padding: "1rem 2rem",
+          fontWeight: 600,
+          fontFamily: "'Montserrat', Arial, sans-serif",
+          boxShadow: "0 3px 8px rgba(255,45,85,0.15)",
+          zIndex: 1000
+        }}>
+          Profile updated successfully!
+        </div>
+      )}
+    </div>
   );
 }
