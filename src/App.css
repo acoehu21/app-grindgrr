@@ -339,8 +339,26 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: 1.5rem;
+  margin-top: -1.5rem;
   width: 100%;
+}
+
+.chat-partner-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chat-partner-photo,
+.chat-partner-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.chat-partner-info h2 {
+  color: black;
 }
 
 .chat-body {
@@ -499,12 +517,14 @@ body {
 
 .sent {
   align-self: flex-end;
-  background-color: #ff2d55;
-  color: white;
+  background-color: transparent;
+  border: 2px solid #ff2d55;
+  color: black;
 }
 
 .received {
   align-self: flex-start;
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: transparent;
+  border: 2px solid #ff2d55;
+  color: black;
 }
