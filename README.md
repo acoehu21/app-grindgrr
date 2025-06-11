@@ -15,3 +15,14 @@ GrindGrr is a Tinder-style app for dog owners to find playdates for their furry 
 
 - **Frontend**: React with styled-components
 - **Backend**: Supabase (Authentication, Database, Storage)
+
+## Prerequisites
+
+Node.js v20+
+
+## Installation
+
+1. `npm install`
+2. `npm run build`
+3. `npm run preview`
+4. Open localhost URL
