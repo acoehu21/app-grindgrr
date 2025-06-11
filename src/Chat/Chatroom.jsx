@@ -4,9 +4,13 @@ import { supabase } from "../../supabaseClient";
 import "../App.css";
 import { ArrowLeft, Dog, MessageCircle, UserRoundPen, Send } from 'lucide-react';
 
+/**
+ * Chatroom component for displaying and managing a real-time chat session.
+ * @returns {JSX.Element} The rendered Chatroom component.
+ */
 const Chatroom = () => {
     const navigate = useNavigate();
-    const { chatId } = useParams(); // Get chat ID from URL
+    const { chatId } = useParams(); // The chat session ID from the URL
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState("");
     const [loading, setLoading] = useState(true);
@@ -14,11 +18,13 @@ const Chatroom = () => {
     const [currentUserId, setCurrentUserId] = useState(null);
     const [match, setMatch] = useState(null); // State for match data
     const [dogNames, setDogNames] = useState({}); // State for dog names { dogId: dogName }
-
     const messagesEndRef = useRef(null); // Ref for scrolling to the latest message
 
     useEffect(() => {
-        // Fetch current user
+        /**
+         * Fetches the current user from Supabase and updates state.
+         * @returns {Promise<void>}
+         */
         const fetchUser = async () => {
             const { data: { user }, error } = await supabase.auth.getUser();
             if (error) {
@@ -27,16 +33,19 @@ const Chatroom = () => {
                 setCurrentUserId(user?.id || null);
             }
         };
-
         fetchUser();
     }, []);
 
     useEffect(() => {
-        if (!chatId || !currentUserId) return; // Don't fetch data if chatId or userId is missing
+        if (!chatId || !currentUserId) return;
 
         setLoading(true);
         setError(null);
 
+        /**
+         * Fetches match, dog, and message data for the chatroom.
+         * @returns {Promise<void>}
+         */
         const fetchData = async () => {
             try {
                 // Fetch match_id from chats table using chatId
@@ -72,24 +81,21 @@ const Chatroom = () => {
                     return;
                 }
 
-                setMatch(matchData); // Store match data in state
+                setMatch(matchData);
 
                 // Fetch dog names and photos
-                const dogIds = [matchData.dog1_id, matchData.dog2_id].filter(Boolean); // Get valid dog IDs
+                const dogIds = [matchData.dog1_id, matchData.dog2_id].filter(Boolean);
                 const { data: dogProfilesData, error: dogProfilesError } = await supabase
                     .from('dog_profiles')
-                    .select('id, name, photo') // Select name and photo
+                    .select('id, name, photo')
                     .in('id', dogIds);
 
-                if (dogProfilesError) {
-                    // Continue without dog names, display owner username as fallback
-                } else {
-                    // Map dog IDs to name and photo
+                if (!dogProfilesError) {
                     const namesAndPhotosMap = dogProfilesData.reduce((acc, dog) => {
-                        acc[dog.id] = { name: dog.name, photo: dog.photo }; // Store both name and photo
+                        acc[dog.id] = { name: dog.name, photo: dog.photo };
                         return acc;
                     }, {});
-                    setDogNames(namesAndPhotosMap); // Store dog data in state
+                    setDogNames(namesAndPhotosMap);
                 }
 
                 // Fetch existing messages
@@ -121,7 +127,7 @@ const Chatroom = () => {
 
         fetchData();
 
-        // Set up real-time subscription
+        // Set up real-time subscription for new messages
         const subscription = supabase
             .channel(`chatroom_${chatId}`)
             .on(
@@ -129,7 +135,6 @@ const Chatroom = () => {
                 { event: 'INSERT', schema: 'public', table: 'messages', filter: `chat_id=eq.${chatId}` },
                 (payload) => {
                     const newMessageData = payload.new;
-
                     // Fetch the full message data (including profile)
                     supabase
                         .from('messages')
@@ -140,13 +145,12 @@ const Chatroom = () => {
                             created_at,
                             profiles!messages_sender_id_fkey ( username, avatar_url )
                         `)
-                        .eq('id', newMessageData.id) // Fetch by the new message's ID
+                        .eq('id', newMessageData.id)
                         .single()
                         .then(({ data: fullMessageData, error: fetchError }) => {
                             if (fetchError) {
                                 setMessages(latestMessages => {
                                     const messagesWithFallback = [...latestMessages, newMessageData];
-                                    // Filter out duplicates after adding
                                     return messagesWithFallback.filter((msg, index, self) =>
                                         index === self.findIndex((m) => m.id === msg.id)
                                     );
@@ -154,7 +158,6 @@ const Chatroom = () => {
                             } else if (fullMessageData) {
                                 setMessages(latestMessages => {
                                     const messagesWithNew = [...latestMessages, fullMessageData];
-                                    // Filter out duplicates after adding
                                     return messagesWithNew.filter((msg, index, self) =>
                                         index === self.findIndex((m) => m.id === msg.id)
                                     );
@@ -162,10 +165,8 @@ const Chatroom = () => {
                             }
                         })
                         .catch(fetchError => {
-                            // Fallback if the fetch promise itself fails
                             setMessages(latestMessages => {
                                 const messagesWithFallback = [...latestMessages, newMessageData];
-                                // Filter out duplicates after adding
                                 return messagesWithFallback.filter((msg, index, self) =>
                                     index === self.findIndex((m) => m.id === msg.id)
                                 );
@@ -174,26 +175,33 @@ const Chatroom = () => {
                 }
             )
             .subscribe();
-
-        // Cleanup subscription on component unmount
         return () => {
             supabase.removeChannel(subscription);
         };
 
-    }, [chatId, currentUserId]); // Re-run effect if chatId or currentUserId changes
+    }, [chatId, currentUserId]);
 
-    // Scroll to the latest message whenever messages update
     useEffect(() => {
+        // Scrolls to the latest message when messages update.
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    /**
+     * Navigates back to the chat list.
+     * @returns {void}
+     */
     const handleBack = () => {
         navigate("/chat");
     };
 
+    /**
+     * Sends a new message to the chat.
+     * @param {React.FormEvent} e - The form submission event.
+     * @returns {Promise<void>}
+     */
     const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (!newMessage.trim() || !currentUserId || !chatId) return; // Don't send empty messages
+        if (!newMessage.trim() || !currentUserId || !chatId) return;
 
         setError(null);
 
@@ -210,23 +218,39 @@ const Chatroom = () => {
         if (error) {
             setError("Could not send message.");
         } else {
-            setNewMessage(""); // Clear input field on success
+            setNewMessage("");
         }
     };
 
+    /**
+     * Navigates to the profile setup page.
+     * @returns {void}
+     */
     const handleProfileSetup = () => {
         navigate("/profile-setup");
     };
 
+    /**
+     * Navigates to the home page.
+     * @returns {void}
+     */
     const handleHome = () => {
         navigate("/");
     };
 
+    /**
+     * Navigates to the chat list page.
+     * @returns {void}
+     */
     const handleChat = () => {
         navigate("/chat");
     };
 
-    // Helper function to get dog data (name and photo) based on sender_id and match data
+    /**
+     * Gets the dog data (name and photo) for a given sender.
+     * @param {string} senderId - The sender's user ID.
+     * @returns {{name: string, photo: string|null}} The dog's name and photo URL, or defaults if not found.
+     */
     const getDogDataForSender = (senderId) => {
         if (!match || !dogNames || !senderId) return { name: 'Unknown Dog', photo: null };
 
@@ -236,7 +260,7 @@ const Chatroom = () => {
             return dogNames[match.dog2_id] || { name: 'Unknown Dog', photo: null };
         }
 
-        return { name: 'Unknown Dog', photo: null }; // Fallback
+        return { name: 'Unknown Dog', photo: null };
     };
 
     return (

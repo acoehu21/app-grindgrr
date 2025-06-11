@@ -10,18 +10,39 @@ import { UserRoundPen, Dog, MessageCircle } from 'lucide-react';
 
 const dogImageUrl = "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=400&q=80";
 
+/**
+ * Home component for displaying the landing page and navigation.
+ * @param {Object} props - Component props.
+ * @param {Object} props.session - The current user session.
+ * @param {Function} props.signUp - Function to trigger Google sign-in.
+ * @param {Function} props.signOut - Function to sign out the user.
+ * @param {Function} props.createProfile - Function to create a user profile.
+ * @returns {JSX.Element} The rendered Home component.
+ */
 function Home({ session, signUp, signOut, createProfile }) {
   const navigate = useNavigate();
 
+  /**
+   * Navigates to the profile setup page after creating a profile.
+   * @returns {Promise<void>}
+   */
   const handleCreateProfile = async () => {
     await createProfile();
     navigate("/profile-setup");
   };
 
+  /**
+   * Navigates to the swipe page.
+   * @returns {void}
+   */
   const handleStartSwiping = () => {
     navigate("/swipe");
   }
 
+  /**
+   * Navigates to the chat list page.
+   * @returns {void}
+   */
   const handleChat = () => {
     navigate("/chat");
   }
@@ -60,6 +81,10 @@ function Home({ session, signUp, signOut, createProfile }) {
   );
 }
 
+/**
+ * Main App component that handles routing and session management.
+ * @returns {JSX.Element} The rendered App component with routes.
+ */
 function App() {
   const [session, setSession] = useState(null);
 
@@ -77,16 +102,28 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  /**
+   * Signs out the current user.
+   * @returns {Promise<void>}
+   */
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
+  /**
+   * Initiates Google OAuth sign-in.
+   * @returns {Promise<void>}
+   */
   const signUp = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
     });
   };
 
+  /**
+   * Creates a user profile in the Supabase database.
+   * @returns {Promise<void>}
+   */
   const createProfile = async () => {
     const { data, error } = await supabase
       .from("profiles")

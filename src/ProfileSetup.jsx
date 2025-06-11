@@ -10,6 +10,13 @@ const defaultDog = {
   photo: "",
 };
 
+/**
+ * ProfileSetup component for creating and editing user and dog profiles.
+ * @param {Object} props - Component props.
+ * @param {Object} props.user - The current user object.
+ * @param {Function} props.onBack - Function to navigate back.
+ * @returns {JSX.Element} The rendered ProfileSetup component.
+ */
 export default function ProfileSetup({ user, onBack }) {
   const [name, setName] = useState(user?.user_metadata?.full_name || "");
   const [email] = useState(user?.email || "");
@@ -21,6 +28,10 @@ export default function ProfileSetup({ user, onBack }) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
+    /**
+     * Loads user and dog profiles from Supabase and updates state.
+     * @returns {Promise<void>}
+     */
     async function loadProfiles() {
       if (!user) return;
       const { data: profileData } = await supabase
@@ -43,6 +54,12 @@ export default function ProfileSetup({ user, onBack }) {
     loadProfiles();
   }, [user]);
 
+  /**
+   * Updates a field for the currently active dog profile.
+   * @param {string} field - The field name to update.
+   * @param {any} value - The new value for the field.
+   * @returns {void}
+   */
   const updateDog = (field, value) => {
     setDogs((prev) =>
       prev.map((dog, idx) =>
@@ -51,6 +68,12 @@ export default function ProfileSetup({ user, onBack }) {
     );
   };
 
+  /**
+   * Uploads a photo to Supabase Storage and returns the public URL.
+   * @param {File} file - The file to upload.
+   * @param {string} folder - The folder to upload to.
+   * @returns {Promise<string>} The public URL of the uploaded photo, or an empty string on failure.
+   */
   const uploadPhoto = async (file, folder) => {
     if (!file) return "";
     const fileExt = file.name.split(".").pop();
@@ -66,6 +89,11 @@ export default function ProfileSetup({ user, onBack }) {
     return data.publicUrl;
   };
 
+  /**
+   * Handles user photo file input change and updates the user profile photo.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event.
+   * @returns {Promise<void>}
+   */
   const handleUserPhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -82,6 +110,11 @@ export default function ProfileSetup({ user, onBack }) {
     }
   };
 
+  /**
+   * Handles dog photo file input change and updates the active dog profile photo.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event.
+   * @returns {Promise<void>}
+   */
   const handleDogPhotoChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -89,12 +122,20 @@ export default function ProfileSetup({ user, onBack }) {
     if (url) updateDog("photo", url);
   };
 
+  /**
+   * Adds a new dog profile to the list.
+   * @returns {void}
+   */
   const addDogProfile = () => {
     setDogs((prev) => [...prev, { ...defaultDog }]);
     setActiveDog(dogs.length);
   };
 
   // cannot delete with just one dog profile
+  /**
+   * Deletes the currently active dog profile from Supabase and state.
+   * @returns {Promise<void>}
+   */
   const deleteDogProfile = async () => {
     if (dogs[activeDog]?.id) {
       await supabase
@@ -110,6 +151,10 @@ export default function ProfileSetup({ user, onBack }) {
     setShowDeleteDialog(false);
   };
 
+  /**
+   * Saves the user and dog profiles to Supabase.
+   * @returns {Promise<void>}
+   */
   const handleSave = async () => {
     setSaving(true);
 

@@ -16,6 +16,12 @@ const PLACEHOLDER = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/N
 const STATUS_DELAY = 500;
 const MATCH_DELAY = 2000;
 
+/**
+ * Swipe component for browsing and swiping on dog profiles.
+ * @param {Object} props - Component props.
+ * @param {Object} props.session - The current user session.
+ * @returns {JSX.Element} The rendered Swipe component.
+ */
 function Swipe({ session }) {
     const [userDog, setUserDog] = useState(null);
     const [matchDog, setMatchDog] = useState(null);
@@ -25,14 +31,26 @@ function Swipe({ session }) {
     const navigate = useNavigate();
     const userID = session?.user?.id;
 
+    /**
+     * Navigates to the profile setup page.
+     * @returns {void}
+     */
     const handleProfileSetup = () => {
         navigate("/profile-setup");
     };
 
+    /**
+     * Navigates to the home page.
+     * @returns {void}
+     */
     const handleHome = () => {
         navigate("/");
     };
 
+    /**
+     * Navigates to the chat list page.
+     * @returns {void}
+     */
     const handleChat = () => {
         navigate("/chat");
     };
@@ -41,7 +59,10 @@ function Swipe({ session }) {
         if (userID) {
             setStatus("Loading profile...");
             setIsLoading(true);
-            // sets first dog profile found as userDog
+            /**
+             * Fetches the user's dog profile and updates state.
+             * @returns {Promise<void>}
+             */
             const fetchUserDog = async () => {
                 const { data, error } = await supabase
                     .from('dog_profiles')
@@ -71,6 +92,10 @@ function Swipe({ session }) {
         }
     }, [userID]);
 
+    /**
+     * Fetches the next dog profile to swipe on, excluding already swiped dogs.
+     * @returns {Promise<void>}
+     */
     const fetchDogProfiles = async () => {
         if (!userDog) {
             if (userID && isLoading) setIsLoading(false);
@@ -127,6 +152,11 @@ function Swipe({ session }) {
         }
     }, [userDog, fetchProfile, userID]);
 
+    /**
+     * Handles a swipe action (like or pass) on a dog profile.
+     * @param {'like'|'pass'} action - The swipe action to perform.
+     * @returns {Promise<void>}
+     */
     const onSwipe = async (action) => {
         if (!userDog || !matchDog) {
             return;

@@ -4,6 +4,10 @@ import { supabase } from "../../supabaseClient";
 import "../App.css";
 import { Dog, MessageCircle, UserRoundPen } from 'lucide-react';
 
+/**
+ * ChatList component displays a list of active chat matches for the user.
+ * @returns {JSX.Element} The rendered ChatList component.
+ */
 const ChatList = () => {
   const navigate = useNavigate();
   const [matches, setMatches] = useState([]);
@@ -16,6 +20,10 @@ const ChatList = () => {
     fetchMatches();
   }, []);
 
+  /**
+   * Fetches the user's active matches from Supabase and updates state.
+   * @returns {Promise<void>} No return value. Updates matches, error, and loading state.
+   */
   const fetchMatches = async () => {
     try {
       setError(null);
@@ -108,18 +116,35 @@ const ChatList = () => {
     }
   };
 
+  /**
+   * Navigates to the profile setup page.
+   * @returns {void}
+   */
   const handleProfileSetup = () => {
     navigate("/profile-setup");
   };
 
+  /**
+   * Navigates to the home page.
+   * @returns {void}
+   */
   const handleHome = () => {
     navigate("/");
   };
 
+  /**
+   * Navigates to the chat list page.
+   * @returns {void}
+   */
   const handleChat = () => {
     navigate("/chat");
   };
 
+  /**
+   * Handles clicking on a match to open or create a chat session.
+   * @param {string|number} matchId - The ID of the match to open a chat for.
+   * @returns {Promise<void>} No return value. Navigates to chatroom or sets error.
+   */
   const handleMatchClick = async (matchId) => {
     try {
       // Find the match object

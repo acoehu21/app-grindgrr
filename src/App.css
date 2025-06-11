@@ -13,6 +13,11 @@ body {
   font-family: 'Montserrat', Arial, sans-serif;
 }
 
+/* =========================
+   Layout and Container Styles
+   ========================= */
+
+/* Main app container for centering content */
 .grindgrr-container {
   display: flex;
   flex-direction: column;
@@ -40,6 +45,11 @@ body {
   font-family: 'Montserrat', Arial, sans-serif;
 }
 
+/* =========================
+   Header Styles
+   ========================= */
+
+/* App header with logo and subtitle */
 .app-header {
   width: 100%;
   text-align: center;
