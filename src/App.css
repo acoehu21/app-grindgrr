@@ -139,7 +139,6 @@ body {
 }
 
 .pass-btn {
-  marginRight: 0.5rem;
   background: #fecaca;
   color: #dc2626;
 }
@@ -208,7 +207,6 @@ body {
 
 .nav-bar {
   display: flex;
-  justifyContent: space-around;
   width: 100%;
   padding: 10px;
   border-top: 2px solid #eee;
