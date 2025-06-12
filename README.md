@@ -24,6 +24,7 @@ Node.js v20+
 Create a Supabase Database and put the supabase URL (VITE_SUPABASE_URL) and ANON key (VITE_SUPABASE_ANON_KEY) into a .env file.
 
 1. Create users table
+```sql
 CREATE TABLE public.users (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     email text NOT NULL UNIQUE,
@@ -39,9 +40,10 @@ CREATE TABLE public.users (
     created_at timestamp with time zone DEFAULT now(),
     updated_at timestamp with time zone DEFAULT now(),
     CONSTRAINT users_pkey PRIMARY KEY (id)
-);
-
+)
+```
 2. Create profiles table
+```sql
 CREATE TABLE public.profiles (
     id uuid NOT NULL,
     username text,
@@ -50,8 +52,9 @@ CREATE TABLE public.profiles (
     CONSTRAINT profiles_pkey PRIMARY KEY (id),
     CONSTRAINT profiles_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id)
 );
-
+```
 3. Create dog_profiles table
+```sql
 CREATE TABLE public.dog_profiles (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     owner_id uuid,
@@ -64,8 +67,9 @@ CREATE TABLE public.dog_profiles (
     CONSTRAINT dog_profiles_pkey PRIMARY KEY (id),
     CONSTRAINT dog_profiles_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.profiles(id)
 );
-
+```
 4. Create dogs table
+```sql
 CREATE TABLE public.dogs (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     owner_id uuid,
@@ -85,8 +89,9 @@ CREATE TABLE public.dogs (
     CONSTRAINT dogs_pkey PRIMARY KEY (id),
     CONSTRAINT dogs_owner_id_fkey FOREIGN KEY (owner_id) REFERENCES public.users(id)
 );
-
+```
 5. Create dog_images table
+```sql
 CREATE TABLE public.dog_images (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     dog_id uuid,
@@ -95,8 +100,9 @@ CREATE TABLE public.dog_images (
     CONSTRAINT dog_images_pkey PRIMARY KEY (id),
     CONSTRAINT dog_images_dog_id_fkey FOREIGN KEY (dog_id) REFERENCES public.dogs(id)
 );
-
+```
 6. Create matches table
+```sql
 CREATE TABLE public.matches (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     dog1_id uuid,
@@ -113,8 +119,9 @@ CREATE TABLE public.matches (
     CONSTRAINT matches_dog2_id_fkey FOREIGN KEY (dog2_id) REFERENCES public.dog_profiles(id),
     CONSTRAINT matches_dog1_id_fkey FOREIGN KEY (dog1_id) REFERENCES public.dog_profiles(id)
 );
-
+```
 7. Create swipes table
+```sql
 CREATE TABLE public.swipes (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     swiper_dog_id uuid,
@@ -125,8 +132,9 @@ CREATE TABLE public.swipes (
     CONSTRAINT swipes_swiped_dog_id_fkey FOREIGN KEY (swiped_dog_id) REFERENCES public.dog_profiles(id),
     CONSTRAINT swipes_swiper_dog_id_fkey FOREIGN KEY (swiper_dog_id) REFERENCES public.dog_profiles(id)
 );
-
+```
 8. Create chats table
+```sql
 CREATE TABLE public.chats (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     match_id uuid UNIQUE,
@@ -139,8 +147,9 @@ CREATE TABLE public.chats (
     CONSTRAINT chats_pkey PRIMARY KEY (id),
     CONSTRAINT chats_match_id_fkey FOREIGN KEY (match_id) REFERENCES public.matches(id)
 );
-
+```
 9. Create messages table
+```sql
 CREATE TABLE public.messages (
     id uuid NOT NULL DEFAULT gen_random_uuid(),
     chat_id uuid,
@@ -151,7 +160,7 @@ CREATE TABLE public.messages (
     CONSTRAINT messages_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES public.chats(id),
     CONSTRAINT messages_sender_id_fkey FOREIGN KEY (sender_id) REFERENCES public.profiles(id)
 );
-
+```
 Ensure that the messages table has realtime subscription.
 
 ## Installation
